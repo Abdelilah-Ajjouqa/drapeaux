@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -28,7 +29,7 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            return response()->json(["message"=>"user have been created succesfully"], 201);
+            return response()->json(["Users"=>$user], 201);
 
         } catch (Exception $e) {
             return response()->json(["message"=>"error", "error"=>$e->getMessage()], 500);
@@ -52,6 +53,21 @@ class AuthController extends Controller
                 return response()->json(["message"=>"Email or Password is incorrect !"], 401);
             }
 
+            $token = $user->createToken("Abdelilah",["*"])->plainTextToken;
+
+            return response()->json(["message"=>"you have login by succesfully", "token"=>$token], 200);
+
+        } catch (Exception $e){
+            return response()->json(["message"=>"error", "error"=>$e->getMessage()], 500);
+        }
+    }
+
+    public function logout(Request $request){
+        try{
+            $request->user()->currentAccessToken()->delete(); //delete all tokens
+            // $request->user()->currentAccessToken()->
+
+            return response()->json(["message"=>"you logout"], 200);
 
         } catch (Exception $e){
             return response()->json(["message"=>"error", "error"=>$e->getMessage()], 500);
