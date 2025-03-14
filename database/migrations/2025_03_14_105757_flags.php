@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('flags', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('country_id')->constrained()->onDelete('cascade');
+            $table->foreignId('country_id')->constrained("countries")->onDelete('cascade');
             $table->string('flag_picture');
             $table->timestamps();
         });
